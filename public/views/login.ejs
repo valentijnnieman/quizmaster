@@ -1,0 +1,64 @@
+<div ng-controller='login'>
+  <div class='row well well--login well--game' ng-show='logged_in && joined_team'>
+    <div class='col-xs-12 col-lg-4 col-lg-offset-4'>
+      <button href='/game' class='btn btn-success' ng-click='begin_game()'>Begin nieuw spel</button>
+      <input type='text' placeholder='Game to Join' ng-model='game_to_join'>
+      <button class='btn btn-success' ng-click='join_game(game_to_join)'>Sluit aan bij spel</button>
+    </div>
+  </div>
+  <!-- Login as user -->
+  <div class='row well well--login' ng-show='!logged_in'>
+    <div class='col-xs-6 col-lg-4 col-lg-offset-4'>
+      <form class='form-horizontal' ng-submit='login_form()'>
+        <h4>Log in als: </h4>
+        <input type='text' class='form-control' name='name' ng-model='login_data.name' placeholder='Naam'><br>
+        <input type='password' class='form-control' name='password' ng-model='login_data.password' placeholder='Wachtwoord'><br>
+        <input type='submit' class='btn btn-default' value='GO!'>
+      </form>
+    </div>
+  <!-- Create new user -->
+    <div class='col-xs-6 col-lg-4 col-lg-offset-4'>
+      <form ng-submit='create_form()'>
+        <h4>Nieuw? Registreer je hier: </h4>
+        <input type='text' class='form-control' name='name' ng-model='create_data.name' placeholder='Naam'><br>
+        <input type='password' class='form-control' name='password' ng-model='create_data.password' placeholder='Wachtwoord'><br>
+        <input class='btn btn-default' type='submit' value='GO!'>
+      </form>
+    </div>
+  </div>
+  <!-- Join a team -->
+  <div class='row well well--login' ng-show='logged_in && !joined_team'>
+    <div class='col-xs-6 col-lg-4 col-lg-offset-4'>
+      <h4>Kies je team:</h4>
+      <div class='teams-list'>
+      </div>
+    </div>
+  <!-- create team -->
+    <div class='col-xs-6 col-lg-4 col-lg-offset-4'>
+      <h4>Of maak een nieuw team:</h4>
+      <form ng-submit='create_team_form()'>
+        <input type='text' class='form-control' name='name' ng-model='create_team_data.name' placeholder='Naam'><br>
+        <input class='btn btn-default' type='submit' value='GO!'>
+      </form>
+    </div>
+  </div>
+  <div class='row' ng-show='joined_team'>
+    <div class='col-xs-12'>
+      <div class='alert alert-danger'>Je zit in team {{ team_name }}!</div>
+    </div>
+  </div>
+    <!-- update user -->
+  <div class='row well well--change'  ng-show='logged_in'>
+    <div class='col-xs-4'>
+      <form ng-submit='update_form()'>
+        <h4>Verander je naam: </h4>
+        <input type='text' class='form-control' name='name' placeholder={{user.name}} ng-model='login_data.name'><br>
+        <input type='submit' class='btn btn-default' value='GO!'>
+      </form>
+    </div>
+    <div class='col-xs-6 col-lg-4 col-lg-offset-4' ng-show='joined_team'>
+      <h4>Verander van team:</h4>
+      <div class='teams-list'>
+      </div>
+    </div>
+  </div>

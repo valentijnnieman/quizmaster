@@ -1,0 +1,31 @@
+<div ng-controller='game'>
+	<div class="jumbotron">
+		<div class="row">
+			<div class="col-sm-12">
+	    	<div id='messageField' class='alert alert-info'></div>
+				<div id="allPosts" ng-show='is_quizmaster' class="form-control"></div>
+				<div id="onePost" ng-show='!is_quizmaster' class="form-control"></div>
+			    <div class='btn btn-success' id='buzzer' ng-show='!is_quizmaster'>?</div>
+			    <div class='btn btn-warning' id='resetButton' ng-show='is_quizmaster'>Reset</div>
+			    <div class='btn btn-danger' id='clearButton' ng-show='is_quizmaster'>Clear</div>
+
+	    </div>
+		</div>
+	</div>
+
+	<div class='row'>
+		<div class='col-xs-12'>
+			<div class='well' id='teams'>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-xs-12">
+			<small ng-repeat='data in id_of_teams.data'> Team: {{ data.team_id }} </small><br>
+	    <small>De quizmaster is: {{ quizmaster.name }} en jij bent ingelogd als: {{ current_user.name }}</small>
+		</div>
+	</div>
+</div>
+
+{{ current_user }}

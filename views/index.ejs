@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html class="no-js" ng-app='QuizMaster'>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>quizmaster_socket</title>
+        <meta name="description" content="quiz app using websocket">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="css/core.css">
+        <link rel="stylesheet" href="css/app.css">
+
+          <!-- jQuery --> 
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="public/bower_components/jQuery/jquery.min.js"><\/script>')</script>
+
+        <!-- Angular -->
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-route.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-cookies.min.js"></script>
+
+        <!-- socket.io -->
+        <script src="/socket.io/socket.io.js"></script>
+
+        <!-- APP CODE -->
+        <script src="js/app.min.js"></script>
+
+        <script src='js/controllers/main_controller.js'></script>
+        <script src='js/controllers/login_controller.js'></script>
+        <script src='js/controllers/game_controller.js'></script>
+
+    <body>
+
+	<!--[if lt IE 8]>
+		<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+	<![endif]-->
+
+  <h1 class='hero'> Welkom bij Quizmaster! :) </h1>
+  <div class='container' ng-controller='main'>
+    <div ng-view>
+      
+    </div>
+  </div>
+</body>
+</html>
