@@ -5,7 +5,12 @@
 	    	<div id='messageField' class='alert alert-info'></div>
 				<div id="allPosts" ng-show='is_quizmaster' class="form-control"></div>
 				<div id="onePost" ng-show='!is_quizmaster' class="form-control"></div>
-			    <div class='btn btn-success' id='buzzer' ng-show='!is_quizmaster'>?</div>
+			    <div class='btn btn-success' id='buzzer' ng-show='!is_quizmaster' ng-click='buzzerClick()' ng-touch='buzzerClick()'>?</div>
+  				<div ng-show='answer_given' style='display: inline-block;'>
+						{{ user_that_answered.name }}
+						<div class='btn btn-success' id='correctButton'>Correct!</div>
+						<div class='btn btn-danger' id='foutButton'>Fout!</div>
+					</div>
 			    <div class='btn btn-warning' id='resetButton' ng-show='is_quizmaster'>Reset</div>
 			    <div class='btn btn-danger' id='clearButton' ng-show='is_quizmaster'>Clear</div>
 
@@ -16,16 +21,24 @@
 	<div class='row'>
 		<div class='col-xs-12'>
 			<div class='well' id='teams'>
+				<div ng-repeat='data in teams_array'> 
+					<small>{{ data.name }}:</small>
+					<small>{{ data.score }}</small>
+
+				</div>
 			</div>
 		</div>
 	</div>
 
+		<div class='row'>
+		<div class='col-xs-12'>
+	</div>
+
 	<div class="row">
+		onhold = {{ on_hold }}
 		<div class="col-xs-12">
-			<small ng-repeat='data in id_of_teams.data'> Team: {{ data.team_id }} </small><br>
+			<small ng-repeat='data in teams_array'> Team: {{ data.name }} </small><br>
 	    <small>De quizmaster is: {{ quizmaster.name }} en jij bent ingelogd als: {{ current_user.name }}</small>
 		</div>
 	</div>
 </div>
-
-{{ current_user }}

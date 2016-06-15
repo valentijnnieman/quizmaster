@@ -8,16 +8,20 @@ QuizMaster.controller('game', ['$scope', '$http', '$cookies', '$routeParams',
 		$sendBlastButton = $('#send'),
 		$resetButton = $('#resetButton'),
 		$clearButton = $('#clearButton'),
+		$correctButton = $('#correctButton'),
 		$messageField = $('#messageField'),
-		$jumbo = $('.jumbotron');
+		$jumbo = $('.jumbotron'),
 		$buzzer = $('#buzzer');
 
 	var canAnswer = false;
 	var answers_amount = 0;
 	var game_id = $routeParams.id;
 	var user_id = $cookies.get('id');
-  
-  get_on_hold();
+
+	$scope.teams_array = [];
+
+	$scope.on_hold = 0;
+	get_on_hold();
 
 	$scope.current_user = {};
 
@@ -26,32 +30,45 @@ QuizMaster.controller('game', ['$scope', '$http', '$cookies', '$routeParams',
 		$http.get('user/' + user_id)
 		.then(function(response) {
 			$scope.current_user = response.data;
+			console.log($scope.current_user);
+		});
+	}
+
+	function get_team(team_id)
+	{
+		console.log('get_team');
+		$http.get('team/' + team_id)
+		.then(function(response) {
+			console.log('GET team/' + team_id);
+			$scope.teams_array.push(response.data);
 		});
 	}
 
 	get_user();
+	//get_team(1)
 
 	function get_on_hold()
 	{
 		$http.get('game/' + game_id)
 		.then(function(response) {
-			$scope.on_hold = response.data.on_hold;
-			console.log("on_hold = " + $scope.on_hold);
 			if(response.data.on_hold == 1) {
-		  	canAnswer = false;
+				$scope.on_hold = 1;
+				canAnswer = false;
 				$messageField.text('Er is gedrukt! Was het antwoord goed?');
 				$messageField.addClass('alert-danger');
 				$jumbo.addClass('jumbo--dark');
 			}
 			else if (response.data.on_hold == 0) {
+				$scope.on_hold = 0;
 				canAnswer = true;
 			}
+			console.log("Response data on hold: ");
+			console.log(response.data.on_hold);
 		});
 	}
 
 	function set_on_hold()
 	{
-		console.log("set on hold is called!");
 		$http.post('game/on_hold', $scope.game).
 		then(function(response) {
 			//$scope.on_hold = get_on_hold();
@@ -77,9 +94,12 @@ QuizMaster.controller('game', ['$scope', '$http', '$cookies', '$routeParams',
 		});
 	});
 
-	$http.get('game/teams/' + game_id).then(function(res) {
-		$scope.id_of_teams = res;
-	});
+	// $http.get('game/teams/' + game_id).then(function(res) {
+	// 	console.log(res.data.length);
+	// 	for(var i = 0; i < res.data.length; i++) {
+	// 		get_team(res.data[i].team_id);
+	// 	}
+	// });
 
 	//SOCKET STUFF
 
@@ -87,8 +107,17 @@ QuizMaster.controller('game', ['$scope', '$http', '$cookies', '$routeParams',
 	socket.emit('room', game_id);
 
 	socket.on('get_on_hold', function(data){
-		console.log("caught get_on_hold!");
-		$scope.on_hold = get_on_hold;
+		console.log("caught get_on_hold! " + data);
+		get_on_hold;
+	});
+
+	socket.on("reload", function() {
+		$http.get('game/teams/' + game_id).then(function(res) {
+			$scope.teams_array = [];
+			for(var i = 0; i < res.data.length; i++) {
+				get_team(res.data[i].team_id);
+			}
+		});
 	});
 
 	socket.on("blast", function(data){
@@ -96,15 +125,24 @@ QuizMaster.controller('game', ['$scope', '$http', '$cookies', '$routeParams',
 		$allPostsTextArea.html('<p>' + copy + data.msg + "</p>");
 		$allPostsTextArea.scrollTop($allPostsTextArea[0].scrollHeight - $allPostsTextArea.height());
 		$allPostsTextArea.css('scrollTop', $allPostsTextArea.css('scrollHeight'));
-
 		$onePostTextArea.html('<p class="green-color">' + data.msg + "</p>");
 	});
 
 	socket.on("answer", function(data) {
 		canAnswer = false;
+		console.log(data);
+		console.log("the user was user " + data.user_id);
 		$messageField.text('Er is gedrukt! Was het antwoord goed?');
 		$messageField.addClass('alert-danger');
 		$jumbo.addClass('jumbo--dark');
+
+		if($scope.is_quizmaster) {
+			$scope.answer_given = true;
+			$http.get('user/' + data.user_id)
+			.then(function(response) {
+				$scope.user_that_answered = response.data;
+			});
+		}
 		//$scope.on_hold = get_on_hold();
 	});
 
@@ -115,7 +153,11 @@ QuizMaster.controller('game', ['$scope', '$http', '$cookies', '$routeParams',
 		$jumbo.removeClass('jumbo--dark');
 		canAnswer = true;
 		answers_amount = 0;
+		if($scope.is_quizmaster) {
+			$scope.answer_given = false;
+		}
 		//$scope.on_hold = get_on_hold();
+		//socket.emit("get_on_hold", game_id, function(){});
 	})
 	
 	$clearAllPosts.click(function(e){
@@ -139,14 +181,14 @@ QuizMaster.controller('game', ['$scope', '$http', '$cookies', '$routeParams',
 	    }
 	})
 
-	$buzzer.click(function(e) {
+	$scope.buzzerClick = function(e) {
 		if(answers_amount < 3) {
 			if(canAnswer) {
 				set_on_hold();
 				answers_amount += 1;
-				socket.emit("blast", {msg: "<div class='answer-message green-color'>" + $scope.current_user.name + " weet het antwoord!" + "</div>"}, game_id, 
+				socket.emit("blast", {msg: "<div class='answer-message green-color'>" + $scope.current_user.name + " weet het antwoord!" + "</div>", user_id: $scope.current_user.id}, game_id, 
 					function(data){});
-				socket.emit("answer", game_id, function(data){});	
+				socket.emit("answer",{user_id: $scope.current_user.id}, game_id, function(data){});	
 			}
 			else {
 				answers_amount += 1;
@@ -154,6 +196,22 @@ QuizMaster.controller('game', ['$scope', '$http', '$cookies', '$routeParams',
 					function(data) {});
 			}
 		}
+	};
+
+	$correctButton.click(function(e) {
+		var id = $scope.user_that_answered.id
+		console.log("id = " + id);
+		$http.get('user/'+id+'/team')
+		.then(function(response) {
+			console.log("TEAM ID IS " + response.data.team_id);
+			$http.put('team/score/' + response.data.team_id)
+			.then(function(response) {
+				socket.emit("reset", game_id, function(data) {});
+				socket.emit("reload", game_id, function() {});
+				set_on_hold();
+			});
+
+		});
 	});
 
 	$resetButton.click(function(e) {
