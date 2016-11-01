@@ -7,8 +7,9 @@
     </div>
   </div>
   <!-- Login as user -->
-  <div class='row well well--login' ng-show='!logged_in'>
-    <div class='col-xs-6 col-lg-4 col-lg-offset-4'>
+  <div class='login'>
+  <div class='row' ng-show='!logged_in'>
+    <div class='col-xs-6 col-xs-offset-3 col-lg-4 col-lg-offset-4'>
       <form class='form-horizontal' ng-submit='login_form()'>
         <h4>Log in als: </h4>
         <input type='text' class='form-control' name='name' ng-model='login_data.name' placeholder='Naam'><br>
@@ -16,15 +17,20 @@
         <input type='submit' class='btn btn-default' value='GO!'>
       </form>
     </div>
+  </div>
+  </div>
   <!-- Create new user -->
-    <div class='col-xs-6 col-lg-4 col-lg-offset-4'>
+  <div class='register'>
+  <div class='row' ng-show='!logged_in'>
+    <div class='col-xs-6 col-xs-offset-3 col-lg-4 col-lg-offset-4'>
       <form ng-submit='create_form()'>
-        <h4>Nieuw? Registreer je hier: </h4>
+        <h4 class='register__header'>Nieuw? Registreer je hier: </h4>
         <input type='text' class='form-control' name='name' ng-model='create_data.name' placeholder='Naam'><br>
         <input type='password' class='form-control' name='password' ng-model='create_data.password' placeholder='Wachtwoord'><br>
         <input class='btn btn-default' type='submit' value='GO!'>
       </form>
     </div>
+  </div>
   </div>
   <!-- Join a team -->
   <div class='row well well--login' ng-show='logged_in && !joined_team'>

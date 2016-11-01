@@ -4,7 +4,7 @@
 //
 **************************************/
 // connect to our socket server
-var socket = io.connect('http://127.0.0.1:3000/');
+var socket = io.connect('http://127.0.0.1:9000/');
 
 var app = app || {};
 
